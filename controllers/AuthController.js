@@ -7,29 +7,39 @@ const api_config = require("../config/api.js");
 const AuthController = {
 
     /* create new user */
-    async create_user(req, res, next) {
+ async create_user(req, res, next) {
+    const { username, email, password } = req.body;
 
-        const newUser = new User({
-            username: req.body.username,
-            email: req.body.email,
-            password: bcrypt.hashSync(req.body.password, 10)
+    if (!username || !email || !password) {
+        return res.status(400).json({
+            type: "error",
+            message: "Username, email, and password are required."
         });
+    }
 
-        try {
-            const user = await newUser.save();
-            res.status(201).json({
-                type : 'success',
-                message: "User has been created successfuly",
-                user
-            })
-        } catch (err) {
-            res.status(500).json({
-                type: "error",
-                message: "Something went wrong please try again",
-                err
-            })
-        }
-    },
+    const hashedPassword = bcrypt.hashSync(password, 10);
+
+    const newUser = new User({
+        username,
+        email,
+        password: hashedPassword
+    });
+
+    try {
+        const user = await newUser.save();
+        res.status(201).json({
+            type: 'success',
+            message: "User has been created successfully",
+            user
+        });
+    } catch (err) {
+        res.status(500).json({
+            type: "error",
+            message: "Something went wrong, please try again",
+            err
+        });
+    }
+},
 
     /* login existing user */
     async login_user(req, res) {

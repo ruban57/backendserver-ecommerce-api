@@ -20,7 +20,7 @@ app.use('/api/v1/orders', order_route);
 app.use('/api/v1/payments', payment_route);
 
 
-const dbConfig = require('./config/database-config');
+const dbConfig = require('./config/databaseConfig');
 
 /* connecting to the database */
 mongoose.connect(dbConfig.MONGO_URI, {
